@@ -24,18 +24,16 @@ do
 	PrintColored($"Исходная матрица ({rows} \u2715 {cols}):\n", ConsoleColor.DarkGray);
 	PrintMatrix(mtx);
 
-	SortDescendingEachRowItems(mtx, SortDirection.Descending);
+	SortEachRowItems(mtx, SortDirection.Descending);
 
 	PrintColored($"\nРезультат:\n", ConsoleColor.DarkGray);
 	PrintMatrix(mtx);
-
-	Console.WriteLine();
 
 } while (AskForRepeat());
 
 // Methods:
 
-static void SortDescendingEachRowItems<T>(T[,] matrix, SortDirection direction) where T : struct, IComparable
+static void SortEachRowItems<T>(T[,] matrix, SortDirection direction) where T : struct, IComparable
 {
 	int rowsCount = matrix.GetLength(0);
 	for (int row = 0; row < rowsCount; ++row)
@@ -215,9 +213,9 @@ static string[,] ToStringTable<T>(T[,] matrix, string format) where T : struct, 
 	int colsCount = matrix.GetLength(1);
 	string[,] strTable = new string[rowsCount, colsCount];
 	int maxLength = 0;
-	for (int col = 0; col < colsCount; ++col)
+	for (int row = 0; row < rowsCount; ++row)
 	{
-		for (int row = 0; row < rowsCount; ++row)
+		for (int col = 0; col < colsCount; ++col)
 		{
 			string strValue = matrix[row, col].ToString(format, null);
 			strTable[row, col] = strValue;

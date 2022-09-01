@@ -14,7 +14,7 @@ do
 
 	ConsoleHelper.StoreColors();
 	ConsoleHelper.SetColors(ConsoleColor.DarkGray, null);
-	Console.WriteLine("Проверочное произведение:");
+	Console.WriteLine("Контрольное произведение:");
 
 	int[,] sampleMtxA = new int[,] { { 2, 4 }, { 3, 2 } };
 	int[,] sampleMtxB = new int[,] { { 3, 4 }, { 3, 3 } };
@@ -45,7 +45,6 @@ do
 	int[,] prodAB = GetMatrixProduct(mtxA, mtxB);
 
 	PrintMatrixProduct(mtxA, mtxB, prodAB);
-	Console.WriteLine();
 
 } while (AskForRepeat());
 
@@ -225,9 +224,9 @@ static string[,] ToStringTable<T>(T[,] matrix, string format, int desirableCellS
 	int cols = matrix.GetLength(1);
 	string[,] strTable = new string[rows, cols];
 	int maxLength = 0;
-	for (int col = 0; col < cols; ++col)
+	for (int row = 0; row < rows; ++row)
 	{
-		for (int row = 0; row < rows; ++row)
+		for (int col = 0; col < cols; ++col)
 		{
 			string strValue = matrix[row, col].ToString(format, null);
 			strTable[row, col] = strValue;

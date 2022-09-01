@@ -20,28 +20,34 @@ do
 	// 	for (n = 1; n < 22; ++n)
 	// 	{
 
-	var spiralMatrix = GetSpiralMatrix(m, n, out int endRow, out int endCol);
+	var spiralMatrix = GetSpiralMatrixV2(m, n, out int endRow, out int endCol);
 	int maxValue = spiralMatrix[endRow, endCol]; // must be == m * n
 
 	PrintColored($"\nМатрица {m} \u2715 {n} (значение 'конечного' элемента спирали: {maxValue})\n", ConsoleColor.DarkGray);
-	PrintSquareMatrixInt(spiralMatrix, GetNumbersToStringFormat(maxValue), endRow, endCol);
+	PrintSpiralMatrixInt(spiralMatrix, GetNumbersToStringFormat(maxValue), endRow, endCol);
 
 	if (maxValue != m * n)
 	{
 		// should never get in here
-		PrintError("\nОшибка: Значение конечного элемента не соответствует размерности матрицы!", ConsoleColor.Red);
+		PrintError("\nОшибка: Значение конечного элемента не соответствует размерности матрицы!\n", ConsoleColor.Red);
 	}
 
-	Console.WriteLine();
-
-	// } // <- test  for-for
+	// } // <- test for-for
 
 } while (AskForRepeat());
 
 // Methods
 
-static int[,] GetSpiralMatrix(int rowsCount, int colsCount, out int endRowIndex, out int endColIndex)
+static int[,] GetSpiralMatrixV2(int rowsCount, int colsCount, out int endRowIndex, out int endColIndex)
 {
+	if (rowsCount < 1 || colsCount < 1)
+		throw new ArgumentOutOfRangeException();
+
+	const int goRight = 0;
+	const int goDown = 1;
+	const int goLeft = 2;
+	const int goUp = 3;
+
 	int[,] matrix = new int[rowsCount, colsCount];
 
 	int h = 0;
@@ -51,36 +57,82 @@ static int[,] GetSpiralMatrix(int rowsCount, int colsCount, out int endRowIndex,
 	int vMin = 0;
 	int vMax = rowsCount - 1;
 
-	int i = 1;
-	while (true)
+	int dir = goRight;
+	int count = rowsCount * colsCount;
+
+	for (int i = 1; i < count; ++i)
 	{
-		// go right
-		for (h = hMin; h <= hMax; ++h) matrix[v, h] = i++;
-		h = hMax; // before break to get correct end indexes
-		if (++vMin > vMax) break;
+		matrix[v, h] = i;
 
-		// go down
-		for (v = vMin; v <= vMax; ++v) matrix[v, h] = i++;
-		v = vMax;
-		if (--hMax < hMin) break;
-
-		// go left
-		for (h = hMax; h >= hMin; --h) matrix[v, h] = i++;
-		h = hMin;
-		if (--vMax < vMin) break;
-
-		// go up
-		for (v = vMax; v >= vMin; --v) matrix[v, h] = i++;
-		v = vMin;
-		if (++hMin > hMax) break;
+		// тупика после поворота не возникнет покуда i < count
+		if (dir == goRight)
+		{
+			if (h < hMax) { ++h; } else { ++vMin; ++v; dir = goDown; }
+		}
+		else if (dir == goDown)
+		{
+			if (v < vMax) { ++v; } else { --hMax; --h; dir = goLeft; }
+		}
+		else if (dir == goLeft)
+		{
+			if (h > hMin) { --h; } else { --vMax; --v; dir = goUp; }
+		}
+		else if (dir == goUp)
+		{
+			if (v > vMin) { --v; } else { ++hMin; ++h; dir = goRight; }
+		}
 	}
+	matrix[v, h] = count;
 
 	endRowIndex = v;
 	endColIndex = h;
 	return matrix;
 }
 
-// static int[,] GetSpiralSquareMatrixV1(int n, out int maxValue)
+// static int[,] GetSpiralMatrixV1(int rowsCount, int colsCount, out int endRowIndex, out int endColIndex)
+// {
+// 	if (rowsCount < 1 || colsCount < 1)
+// 		throw new ArgumentOutOfRangeException();
+
+// 	int[,] matrix = new int[rowsCount, colsCount];
+
+// 	int h = 0;
+// 	int v = 0;
+// 	int hMin = 0;
+// 	int hMax = colsCount - 1;
+// 	int vMin = 0;
+// 	int vMax = rowsCount - 1;
+
+// 	int i = 1;
+// 	while (true)
+// 	{
+// 		// go right
+// 		for (h = hMin; h <= hMax; ++h) matrix[v, h] = i++;
+// 		h = hMax; // before break to get correct end indexes
+// 		if (++vMin > vMax) break;
+
+// 		// go down
+// 		for (v = vMin; v <= vMax; ++v) matrix[v, h] = i++;
+// 		v = vMax;
+// 		if (--hMax < hMin) break;
+
+// 		// go left
+// 		for (h = hMax; h >= hMin; --h) matrix[v, h] = i++;
+// 		h = hMin;
+// 		if (--vMax < vMin) break;
+
+// 		// go up
+// 		for (v = vMax; v >= vMin; --v) matrix[v, h] = i++;
+// 		v = vMin;
+// 		if (++hMin > hMax) break;
+// 	}
+
+// 	endRowIndex = v;
+// 	endColIndex = h;
+// 	return matrix;
+// }
+
+// static int[,] GetSpiralSquareMatrixV0(int n, out int maxValue)
 // {
 // 	int[,] matrix = new int[n, n];
 // 	int itemsCount = n * n;
@@ -122,7 +174,7 @@ static int[,] GetSpiralMatrix(int rowsCount, int colsCount, out int endRowIndex,
 
 #region Print Matrix
 
-static void PrintSquareMatrixInt(int[,] matrix, string format, int rowToHighlight = -1, int colToHighlight = -1)
+static void PrintSpiralMatrixInt(int[,] matrix, string format, int rowToHighlight = -1, int colToHighlight = -1)
 {
 	const string padding = " ";
 	const string itemsDelimiter = "  ";

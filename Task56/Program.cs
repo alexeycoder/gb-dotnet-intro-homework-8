@@ -13,7 +13,7 @@ const int AutoMatrixMaxValue = 200;
 
 const ConsoleColor HighightForeColor = ConsoleColor.White;
 const ConsoleColor HighightBackColor = ConsoleColor.DarkBlue;
-bool tmp = false;
+
 do
 {
 	Console.OutputEncoding = System.Text.Encoding.UTF8;
@@ -23,9 +23,6 @@ do
 	int[,] mtx = CreateMatrixRandomIntByUserChoice(out int rows, out int cols);
 	int[] totalsByRow = GetTotalsByRow(mtx);
 	int[] minRows = FindMinimumIndexes(totalsByRow);
-
-	if (tmp = minRows.Length < 2)
-		continue;
 
 	ConsoleHelper.WriteColored($"Исходная матрица ({rows} \u2715 {cols}):\n", ConsoleColor.DarkGray);
 	PrintMatrix(mtx);
@@ -53,7 +50,7 @@ do
 	}
 	Console.WriteLine();
 
-} while (tmp || AskForRepeat());
+} while (AskForRepeat());
 
 // Methods:
 
@@ -223,9 +220,9 @@ static string[,] ToStringTable<T>(T[,] matrix, string format, int desirableCellS
 	int cols = matrix.GetLength(1);
 	string[,] strTable = new string[rows, cols];
 	int maxLength = 0;
-	for (int col = 0; col < cols; ++col)
+	for (int row = 0; row < rows; ++row)
 	{
-		for (int row = 0; row < rows; ++row)
+		for (int col = 0; col < cols; ++col)
 		{
 			string strValue = matrix[row, col].ToString(format, null);
 			strTable[row, col] = strValue;
